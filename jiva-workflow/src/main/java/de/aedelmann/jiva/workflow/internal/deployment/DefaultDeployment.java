@@ -78,7 +78,7 @@ public class DefaultDeployment implements MutableDeployment {
 
     @Override
     public String getId() {
-        return isRead() ? workflowModel.getName() : null;
+        return isRead() ? workflowModel.getId() : null;
     }
 
     @Override

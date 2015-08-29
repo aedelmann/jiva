@@ -3,7 +3,7 @@ package de.aedelmann.jiva.workflow.internal.jwl.task.actions;
 
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.MappingContext;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.MappingContext;
 
 /**
  * @author Alexander Edelmann

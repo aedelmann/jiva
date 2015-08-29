@@ -2,7 +2,7 @@ package de.aedelmann.jiva.workflow.internal.jwl;
 
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.ActionDescriptor;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.MappingContext;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.MappingContext;
 import de.aedelmann.jiva.workflow.jwl.Node;
 import de.aedelmann.jiva.workflow.jwl.Start;
 import de.aedelmann.jiva.workflow.jwl.Transition;

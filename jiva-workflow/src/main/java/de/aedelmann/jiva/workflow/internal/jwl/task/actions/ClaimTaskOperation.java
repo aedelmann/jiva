@@ -2,7 +2,7 @@ package de.aedelmann.jiva.workflow.internal.jwl.task.actions;
 
 import com.opensymphony.workflow.loader.ConditionDescriptor;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.OSWorkflowUtils;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.OSWorkflowUtils;
 import de.aedelmann.jiva.workflow.internal.runtime.conditions.IsAssignedCondition;
 import de.aedelmann.jiva.workflow.internal.runtime.functions.taskoperations.ClaimTaskFunction;
 

@@ -2,9 +2,11 @@ package de.aedelmann.jiva.workflow.internal.jwl;
 
 import com.opensymphony.workflow.loader.DescriptorFactory;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.MappingContext;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.OSWorkflowMapper;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.MappingContext;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.RuntimeModelMapping;
 import de.aedelmann.jiva.workflow.jwl.Deadline;
+import de.aedelmann.jiva.workflow.jwl.Node;
+import de.aedelmann.jiva.workflow.jwl.Start;
 import de.aedelmann.jiva.workflow.jwl.WorkflowModel;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,9 +16,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
-
-import de.aedelmann.jiva.workflow.jwl.Node;
-import de.aedelmann.jiva.workflow.jwl.Start;
 
 @XmlRootElement(name = "workflow")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -30,6 +29,8 @@ public class JaxbWorkflow extends AbstractJaxbElement implements WorkflowModel {
 
     @XmlTransient
     private String xml;
+
+    private WorkflowDescriptor workflowDescriptor = null;
 
     @Override
     public Start getStart() {
@@ -50,22 +51,26 @@ public class JaxbWorkflow extends AbstractJaxbElement implements WorkflowModel {
         return null;
     }
 
+    public void generateRuntimeModel(MappingContext context) {
+        WorkflowDescriptor descriptor = DescriptorFactory.getFactory().createWorkflowDescriptor();
+        descriptor.setName(getId());
+        context.setWorkflowDescriptor(descriptor);
+
+        Start startNode = getStartNode();
+
+        ((RuntimeModelMapping) startNode).map(context);
+
+        this.workflowDescriptor = descriptor;
+    }
+
     @Override
     public String getXml() {
         return xml;
     }
 
     @Override
-    public WorkflowDescriptor generate(MappingContext context) {
-
-        WorkflowDescriptor descriptor = DescriptorFactory.getFactory().createWorkflowDescriptor();
-        context.setWorkflowDescriptor(descriptor);
-
-        Start startNode = getStartNode();
-
-        ((OSWorkflowMapper) startNode).map(context);
-
-        return descriptor;
+    public <RuntimeModel> RuntimeModel getRuntimeModel(Class<RuntimeModel> runtimeModelClass) {
+        return (RuntimeModel)workflowDescriptor;
     }
 
     @Override

@@ -6,10 +6,10 @@ import com.opensymphony.workflow.loader.ConditionsDescriptor;
 import com.opensymphony.workflow.loader.DescriptorFactory;
 import com.opensymphony.workflow.loader.RestrictionDescriptor;
 import com.opensymphony.workflow.loader.ResultDescriptor;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.Constants;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.MappingContext;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.OSWorkflowMapper;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.OSWorkflowUtils;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.Constants;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.MappingContext;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.RuntimeModelMapping;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.OSWorkflowUtils;
 import de.aedelmann.jiva.workflow.jwl.Node;
 import de.aedelmann.jiva.workflow.jwl.Start;
 import de.aedelmann.jiva.workflow.jwl.Task;
@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  * @author Alexander Edelmann
  */
-public class JaxbTransition extends AbstractJaxbElement implements Transition,OSWorkflowMapper {
+public class JaxbTransition extends AbstractJaxbElement implements Transition,RuntimeModelMapping {
 
     @XmlIDREF
     @XmlAttribute
@@ -94,11 +94,6 @@ public class JaxbTransition extends AbstractJaxbElement implements Transition,OS
         ur.setStep(abstractDescriptor.getId());
 
         return ad;
-    }
-
-    @Override
-    public void reset() {
-
     }
 
     public boolean equals(Object o) {

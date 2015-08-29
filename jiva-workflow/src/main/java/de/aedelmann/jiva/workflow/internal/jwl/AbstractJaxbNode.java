@@ -3,8 +3,8 @@ package de.aedelmann.jiva.workflow.internal.jwl;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.DescriptorFactory;
 import com.opensymphony.workflow.loader.StepDescriptor;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.MappingContext;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.OSWorkflowMapper;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.MappingContext;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.RuntimeModelMapping;
 import de.aedelmann.jiva.workflow.jwl.Node;
 import de.aedelmann.jiva.workflow.jwl.Transition;
 
@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * @author Alexander Edelmann
  */
-public abstract class AbstractJaxbNode extends AbstractJaxbElement implements Node, OSWorkflowMapper {
+public abstract class AbstractJaxbNode extends AbstractJaxbElement implements Node, RuntimeModelMapping<AbstractDescriptor> {
 
     @XmlElement
     private String formKey;
@@ -114,11 +114,6 @@ public abstract class AbstractJaxbNode extends AbstractJaxbElement implements No
 
     public int hashCode() {
         return this.getId().hashCode();
-    }
-
-    @Override
-    public void reset() {
-        this.step = null;
     }
 
     @SuppressWarnings("unchecked")

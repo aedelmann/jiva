@@ -24,7 +24,7 @@ public interface DeploymentService {
     /**
      * Deploys the deployable artifacts to the engine
      *
-     * @post deployment is persisted and is ready for new workflow instances {@See WorkflowService}
+     * @post workflow runtime model is created, ready for new workflow instances {@See WorkflowService}
      *
      * @param deployment
      */

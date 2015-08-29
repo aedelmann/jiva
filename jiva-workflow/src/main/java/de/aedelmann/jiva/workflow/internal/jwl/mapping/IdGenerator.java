@@ -1,4 +1,4 @@
-package de.aedelmann.jiva.workflow.internal.jwl.mapper;
+package de.aedelmann.jiva.workflow.internal.jwl.mapping;
 
 /**
  * @author Alexander Edelmann

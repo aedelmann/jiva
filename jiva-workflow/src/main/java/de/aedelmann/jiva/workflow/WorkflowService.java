@@ -23,6 +23,7 @@ public interface WorkflowService {
      * @post workflow was created in persistent storage
      *
      * @param deploymentId
+     * @throws de.aedelmann.jiva.workflow.runtime.WorkflowNotFoundException
      * @return newly created workflow instance.
      */
     WorkflowInstance startWorkflow(String deploymentId);

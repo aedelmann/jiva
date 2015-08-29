@@ -8,9 +8,9 @@ import com.opensymphony.workflow.loader.FunctionDescriptor;
 import com.opensymphony.workflow.loader.RestrictionDescriptor;
 import com.opensymphony.workflow.loader.ResultDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.Constants;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.MappingContext;
-import de.aedelmann.jiva.workflow.internal.jwl.mapper.OSWorkflowUtils;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.Constants;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.MappingContext;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.OSWorkflowUtils;
 
 import java.util.List;
 

@@ -1,13 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 						   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+						   http://www.springframework.org/schema/jdbc
+                           http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="de.aedelmann.jiva.workflow" />
 
+    <bean id="typeResolver" class="com.opensymphony.workflow.util.SpringTypeResolver"/>
+
+    <bean id="workflowStore" class="de.aedelmann.jiva.workflow.internal.runtime.WorkflowStoreJPA"/>
+
+    <bean id="workflowFactory" class="de.aedelmann.jiva.workflow.internal.runtime.DefaultWorkflowStoreFactory"/>
+
+    <bean id="osworkflowConfiguration" class="com.opensymphony.workflow.config.SpringConfiguration">
+        <property name="store"><ref bean="workflowStore"/></property>
+        <property name="factory"><ref bean="workflowFactory"/></property>
+    </bean>
+
+    <bean id="workflowTarget" class="de.aedelmann.jiva.workflow.internal.runtime.JivaWorkflow" scope="prototype">
+        <property name="configuration"><ref bean="osworkflowConfiguration"/></property>
+        <property name="resolver"><ref bean="typeResolver"/></property>
+    </bean>
+
+
+    <bean id="workflow" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="singleton" value="false"/>
+        <property name="proxyInterfaces" value="com.opensymphony.workflow.Workflow"/>
+        <property name="interceptorNames">
+            <list>
+                <value>transactionInterceptor</value>
+                <value>workflowTarget</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="transactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
+        <property name="transactionManager"><ref bean="transactionManager"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <bean id="JPAAdapter"
+          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="generateDdl" value="true" />
+        <property name="showSql" value="false" />
+        <property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
+
+    </bean>
+
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="jpaVendorAdapter" ref="JPAAdapter" />
+        <property name="persistenceUnitManager" ref="pum" />
+    </bean>
+
+
+    <bean id="pum"
+          class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
+        <property name="persistenceUnitPostProcessors">
+            <bean
+                    class="de.aedelmann.jiva.workflow.internal.runtime.WorkflowPersistenceUnitPostProcessor" />
+        </property>
+        <property name="defaultDataSource" ref="dataSource" />
+    </bean>
+
+    <jdbc:embedded-database id="dataSource" type="H2" />
 
 </beans>
