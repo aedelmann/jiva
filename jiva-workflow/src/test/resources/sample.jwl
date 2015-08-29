@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow id="approval">
+	 <start>
+	 	<transition id="request" to="managerApproval"/>
+	 </start>
+
+	 <task id="managerApproval">
+        <assignment>
+            <literal>
+                <users>alex,jugal</users>
+            </literal>
+        </assignment>
+	 	<transition id="Approve" to="approved"/>
+	 	<transition id="Reject"  to="rejected"/>
+	 </task>
+
+     <end id="approved"/>
+     <end id="rejected"/>
+
+</workflow>
