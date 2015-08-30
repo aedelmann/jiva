@@ -3,75 +3,93 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.aedelmann.jiva</groupId>
-        <artifactId>jiva</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
 
-    <artifactId>jiva-workflow</artifactId>
+    <groupId>com.aedelmann.jiva</groupId>
+    <artifactId>jiva</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
+    <name>Jiva Platform</name>
+    <description>Platform for the development and execution of human-oriented workflow applications</description>
+    
+    <modules>
+        <module>jiva-workflow</module>
+    </modules>
 
-    <name>Workflow Engine</name>
-    <description>Engine that takes workflow models as input and executes them.</description>
+    <properties>
+        <spring.version>4.2.0.RELEASE</spring.version>
+        <hibernate.version>5.0.0.Final</hibernate.version>
+    </properties>
 
+	<dependencyManagement>
     <dependencies>
-        <dependency>
-            <groupId>opensymphony</groupId>
-            <artifactId>osworkflow</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>opensymphony</groupId>
-            <artifactId>oscore</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>opensymphony</groupId>
-            <artifactId>propertyset</artifactId>
-        </dependency>
-
+        
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
         <!-- Apache commons libraries -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        
+        <!-- Workflow Engine -->
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>osworkflow</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>oscore</artifactId>
+            <version>2.2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>propertyset</artifactId>
+            <version>1.3</version>
         </dependency>
 
         <!-- PERSISTENCE -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
 
         <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <version>4.12</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <scope>test</scope>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
+            <version>1.3.176</version>
         </dependency>
     </dependencies>
-
+	</dependencyManagement>
 
     
 </project>
