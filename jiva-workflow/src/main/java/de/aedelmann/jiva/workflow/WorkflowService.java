@@ -2,9 +2,9 @@ package de.aedelmann.jiva.workflow;
 
 
 import de.aedelmann.jiva.workflow.jwl.Transition;
-import de.aedelmann.jiva.workflow.runtime.Attachment;
-import de.aedelmann.jiva.workflow.runtime.Comment;
-import de.aedelmann.jiva.workflow.runtime.WorkflowInstance;
+import de.aedelmann.jiva.workflow.model.Attachment;
+import de.aedelmann.jiva.workflow.model.Comment;
+import de.aedelmann.jiva.workflow.model.WorkflowInstance;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public interface WorkflowService {
      * @post workflow was created in persistent storage
      *
      * @param deploymentId
-     * @throws de.aedelmann.jiva.workflow.runtime.WorkflowNotFoundException
+     * @throws de.aedelmann.jiva.workflow.model.WorkflowNotFoundException
      * @return newly created workflow instance.
      */
     WorkflowInstance startWorkflow(String deploymentId);

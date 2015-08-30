@@ -1,5 +1,7 @@
-package de.aedelmann.jiva.workflow.internal.runtime;
+package de.aedelmann.jiva.workflow.internal.engine;
 
+import de.aedelmann.jiva.workflow.internal.model.OSWorkflowInstance;
+import de.aedelmann.jiva.workflow.internal.model.WorkItem;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor;
 
@@ -15,6 +17,8 @@ public class WorkflowPersistenceUnitPostProcessor implements PersistenceUnitPost
 
     static {
         // register jpa workflow entities here
+        ENTITY_CLASSES.add(OSWorkflowInstance.class.getName());
+        ENTITY_CLASSES.add(WorkItem.class.getName());
     }
 
 

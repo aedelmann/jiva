@@ -11,6 +11,10 @@ public interface Constants {
         
     public static final String CONDITION_TYPE_AND = "AND";
 
+    public static final String BEAN_ARG = "bean.name";
+
+    public static final String TYPE_SPRING = "spring";
+
 }
 
 /* EOF */

@@ -1,4 +1,4 @@
-package de.aedelmann.jiva.workflow.runtime;
+package de.aedelmann.jiva.workflow.model;
 
 public class WorkflowNotFoundException extends RuntimeException {
 }

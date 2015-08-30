@@ -1,4 +1,4 @@
-package de.aedelmann.jiva.workflow.internal.runtime;
+package de.aedelmann.jiva.workflow.internal.engine;
 
 import com.opensymphony.workflow.FactoryException;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;

@@ -1,4 +1,6 @@
-package de.aedelmann.jiva.workflow.runtime;
+package de.aedelmann.jiva.workflow.model;
+
+import de.aedelmann.jiva.workflow.jwl.WorkflowModel;
 
 import java.util.Date;
 import java.util.List;
@@ -12,15 +14,17 @@ public interface WorkflowInstance {
 
     Date getCreatedOn();
 
-    String getDeploymentId();
+    WorkflowModel getModel();
 
     String getInitiator();
+
+    boolean isCompleted();
+
+    Date getCompletedOn();
 
     List<String> getPotentialOwners();
 
     String getActualOwner();
 
-    Date getCompleteBy();
-
-    WorkflowState getState();
+    TaskState getTaskState();
 }

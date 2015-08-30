@@ -2,15 +2,22 @@ package de.aedelmann.jiva.workflow.internal.jwl.task;
 
 
 import com.opensymphony.workflow.loader.AbstractDescriptor;
+import com.opensymphony.workflow.loader.ActionDescriptor;
+import com.opensymphony.workflow.loader.ConditionsDescriptor;
+import com.opensymphony.workflow.loader.DescriptorFactory;
+import com.opensymphony.workflow.loader.RestrictionDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
+import de.aedelmann.jiva.workflow.internal.engine.conditions.IsTaskStateCondition;
+import de.aedelmann.jiva.workflow.internal.engine.conditions.OnlyAssigneeCondition;
 import de.aedelmann.jiva.workflow.internal.jwl.AbstractJaxbNode;
+import de.aedelmann.jiva.workflow.internal.jwl.mapping.Constants;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.MappingContext;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.OSWorkflowUtils;
 import de.aedelmann.jiva.workflow.internal.jwl.task.actions.ClaimTaskOperation;
 import de.aedelmann.jiva.workflow.internal.jwl.task.actions.ReleaseTaskOperation;
 import de.aedelmann.jiva.workflow.internal.jwl.task.actions.TaskOperation;
-import de.aedelmann.jiva.workflow.internal.runtime.functions.PeopleResolutionFunction;
-import de.aedelmann.jiva.workflow.internal.runtime.functions.UnassignFunction;
+import de.aedelmann.jiva.workflow.internal.engine.functions.PeopleResolutionFunction;
+import de.aedelmann.jiva.workflow.internal.engine.functions.UnassignFunction;
 import de.aedelmann.jiva.workflow.jwl.Deadline;
 import de.aedelmann.jiva.workflow.jwl.Task;
 
@@ -19,9 +26,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.aedelmann.jiva.workflow.jwl.Assignment;
+import de.aedelmann.jiva.workflow.model.TaskState;
 
 @XmlRootElement(name = "task")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,12 +64,30 @@ public class JaxbTask extends AbstractJaxbNode implements Task {
     @Override
     public AbstractDescriptor map(MappingContext context) {
         StepDescriptor stepDescriptor = (StepDescriptor)super.map(context);
-        stepDescriptor.getPreFunctions().add(OSWorkflowUtils.createFunctionDescriptor(UnassignFunction.class));
-        stepDescriptor.getPreFunctions().add(OSWorkflowUtils.createFunctionDescriptor(PeopleResolutionFunction.class));
+        stepDescriptor.getPreFunctions().add(OSWorkflowUtils.createFunctionDescriptor(PeopleResolutionFunction.class.getSimpleName()));
+
+        DescriptorFactory factory = new DescriptorFactory();
+        for (Object actionDescriptorObject : stepDescriptor.getActions()) {
+            ActionDescriptor ad = (ActionDescriptor)actionDescriptorObject;
+            ConditionsDescriptor andDescriptor = factory.createConditionsDescriptor();
+            andDescriptor.setType(Constants.CONDITION_TYPE_AND);
+
+            Map<String, String> taskStateConditionParams = new HashMap<String, String>() {{
+                put(IsTaskStateCondition.PARAM, TaskState.CLAIMED.name());
+            }};
+            andDescriptor.getConditions().add(OSWorkflowUtils.createConditionDescriptor(IsTaskStateCondition.class.getSimpleName(), taskStateConditionParams));
+            andDescriptor.getConditions().add(OSWorkflowUtils.createConditionDescriptor(OnlyAssigneeCondition.class.getSimpleName(), new HashMap<String, String>(0)));
+            RestrictionDescriptor restrictionDescriptor = new RestrictionDescriptor();
+            restrictionDescriptor.setConditionsDescriptor(andDescriptor);
+            ad.setRestriction(restrictionDescriptor);
+
+        }
 
         for (TaskOperation taskOperation : TASK_OPERATIONS) {
             stepDescriptor.getActions().add(taskOperation.build(context,stepDescriptor));
         }
+
+
         return stepDescriptor;
     }
 

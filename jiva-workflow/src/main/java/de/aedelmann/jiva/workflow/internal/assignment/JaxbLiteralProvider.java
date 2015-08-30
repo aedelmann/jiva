@@ -2,7 +2,7 @@ package de.aedelmann.jiva.workflow.internal.assignment;
 
 
 import de.aedelmann.jiva.workflow.assignment.PeopleResolutionProvider;
-import de.aedelmann.jiva.workflow.runtime.WorkflowInstance;
+import de.aedelmann.jiva.workflow.model.WorkflowInstance;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -40,13 +40,13 @@ public class JaxbLiteralProvider implements PeopleResolutionProvider {
         if (groups != null) {
             List<String> groupNames = new ArrayList<String>();
 
-            for (String groupId : groups.split(" ")){
+            for (String groupId : groups.split(",")){
                 groupNames.add(groupId);
             }
         }
 
         if (users != null) {
-            for (String user : users.split(" ")) {
+            for (String user : users.split(",")) {
                 resolvedUsers.add(user);
             }
         }

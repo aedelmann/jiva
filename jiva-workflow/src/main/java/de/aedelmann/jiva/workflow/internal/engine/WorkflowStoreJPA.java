@@ -1,4 +1,4 @@
-package de.aedelmann.jiva.workflow.internal.runtime;
+package de.aedelmann.jiva.workflow.internal.engine;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.StoreException;

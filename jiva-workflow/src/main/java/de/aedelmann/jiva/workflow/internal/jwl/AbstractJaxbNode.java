@@ -22,9 +22,6 @@ import java.util.Set;
  */
 public abstract class AbstractJaxbNode extends AbstractJaxbElement implements Node, RuntimeModelMapping<AbstractDescriptor> {
 
-    @XmlElement
-    private String formKey;
-
     @XmlElement(name = "transition",type = JaxbTransition.class)
     protected List<Transition> leaving = new ArrayList<Transition>();
 
@@ -37,22 +34,15 @@ public abstract class AbstractJaxbNode extends AbstractJaxbElement implements No
         this.id = node.getId();
         this.name = node.getName();
         this.description = node.getDescription();
-        this.formKey = node.getFormKey();
         this.leaving = node.getTransitions();
     }
 
     public AbstractJaxbNode(String id, String formKey) {
         super(id);
-        this.formKey = formKey;
     }
 
     protected AbstractJaxbNode() {
 
-    }
-
-    @Override
-    public String getFormKey() {
-        return formKey;
     }
 
     @Override

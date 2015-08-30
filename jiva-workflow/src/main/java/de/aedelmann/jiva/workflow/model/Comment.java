@@ -1,4 +1,4 @@
-package de.aedelmann.jiva.workflow.runtime;
+package de.aedelmann.jiva.workflow.model;
 
 
 import java.util.Date;

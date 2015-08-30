@@ -1,7 +1,7 @@
 package de.aedelmann.jiva.workflow.assignment;
 
 
-import de.aedelmann.jiva.workflow.runtime.WorkflowInstance;
+import de.aedelmann.jiva.workflow.model.WorkflowInstance;
 
 import java.util.Set;
 

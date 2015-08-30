@@ -2,28 +2,33 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 						   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 						   http://www.springframework.org/schema/jdbc
                            http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+                           http://www.springframework.org/schema/data/jpa
+                           http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="de.aedelmann.jiva.workflow" />
 
+    <jpa:repositories base-package="de.aedelmann.jiva.workflow.internal.dao"></jpa:repositories>
+
     <bean id="typeResolver" class="com.opensymphony.workflow.util.SpringTypeResolver"/>
 
-    <bean id="workflowStore" class="de.aedelmann.jiva.workflow.internal.runtime.WorkflowStoreJPA"/>
+    <bean id="workflowStore" class="de.aedelmann.jiva.workflow.internal.engine.WorkflowStoreJPA"/>
 
-    <bean id="workflowFactory" class="de.aedelmann.jiva.workflow.internal.runtime.DefaultWorkflowStoreFactory"/>
+    <bean id="workflowFactory" class="de.aedelmann.jiva.workflow.internal.engine.DefaultWorkflowStoreFactory"/>
 
     <bean id="osworkflowConfiguration" class="com.opensymphony.workflow.config.SpringConfiguration">
         <property name="store"><ref bean="workflowStore"/></property>
         <property name="factory"><ref bean="workflowFactory"/></property>
     </bean>
 
-    <bean id="workflowTarget" class="de.aedelmann.jiva.workflow.internal.runtime.JivaWorkflow" scope="prototype">
+    <bean id="workflowTarget" class="de.aedelmann.jiva.workflow.internal.engine.JivaWorkflow" scope="prototype">
         <property name="configuration"><ref bean="osworkflowConfiguration"/></property>
         <property name="resolver"><ref bean="typeResolver"/></property>
     </bean>
@@ -72,7 +77,7 @@
           class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
         <property name="persistenceUnitPostProcessors">
             <bean
-                    class="de.aedelmann.jiva.workflow.internal.runtime.WorkflowPersistenceUnitPostProcessor" />
+                    class="de.aedelmann.jiva.workflow.internal.engine.WorkflowPersistenceUnitPostProcessor" />
         </property>
         <property name="defaultDataSource" ref="dataSource" />
     </bean>

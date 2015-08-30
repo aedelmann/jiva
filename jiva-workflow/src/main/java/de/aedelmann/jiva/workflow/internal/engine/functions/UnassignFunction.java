@@ -1,4 +1,4 @@
-package de.aedelmann.jiva.workflow.internal.runtime.functions.taskoperations;
+package de.aedelmann.jiva.workflow.internal.engine.functions;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.FunctionProvider;
@@ -9,11 +9,11 @@ import java.util.Map;
 /**
  * @author Alexander Edelmann
  */
-public class ClaimTaskFunction implements FunctionProvider {
+public class UnassignFunction implements FunctionProvider {
 
     @Override
     public void execute(Map transientVars, Map args, PropertySet propertySet) throws WorkflowException {
 
     }
-}
 
+}

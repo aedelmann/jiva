@@ -11,6 +11,4 @@ public interface Node extends BaseElement {
     List<Transition> getTransitions();
 
     Transition getTransitionByName(String name);
-
-    String getFormKey();
 }

@@ -1,6 +1,6 @@
 package de.aedelmann.jiva.workflow.escalation;
 
-import de.aedelmann.jiva.workflow.runtime.WorkflowInstance;
+import de.aedelmann.jiva.workflow.model.WorkflowInstance;
 
 /**
  * An escalation rule is triggered when the deadline was missed.

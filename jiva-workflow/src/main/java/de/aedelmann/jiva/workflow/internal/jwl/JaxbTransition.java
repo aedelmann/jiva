@@ -6,6 +6,8 @@ import com.opensymphony.workflow.loader.ConditionsDescriptor;
 import com.opensymphony.workflow.loader.DescriptorFactory;
 import com.opensymphony.workflow.loader.RestrictionDescriptor;
 import com.opensymphony.workflow.loader.ResultDescriptor;
+import de.aedelmann.jiva.workflow.internal.engine.conditions.IsTaskStateCondition;
+import de.aedelmann.jiva.workflow.internal.engine.conditions.OnlyAssigneeCondition;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.Constants;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.MappingContext;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.RuntimeModelMapping;
@@ -14,6 +16,7 @@ import de.aedelmann.jiva.workflow.jwl.Node;
 import de.aedelmann.jiva.workflow.jwl.Start;
 import de.aedelmann.jiva.workflow.jwl.Task;
 import de.aedelmann.jiva.workflow.jwl.Transition;
+import de.aedelmann.jiva.workflow.model.TaskState;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -21,6 +24,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @XmlRootElement(name = "transition")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,15 +83,6 @@ public class JaxbTransition extends AbstractJaxbElement implements Transition,Ru
         } else {
             ad.setParent(OSWorkflowUtils.findStepByName(context.getWorkflowDescriptor(),
                     parent.getId()));
-        }
-
-        if (parent instanceof Task) {
-            ConditionsDescriptor andDescriptor = factory.createConditionsDescriptor();
-            andDescriptor.setType(Constants.CONDITION_TYPE_AND);
-
-            RestrictionDescriptor restrictionDescriptor = new RestrictionDescriptor();
-            restrictionDescriptor.setConditionsDescriptor(andDescriptor);
-            ad.setRestriction(restrictionDescriptor);
         }
 
         ad.setUnconditionalResult(ur);

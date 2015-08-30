@@ -1,9 +1,9 @@
-package de.aedelmann.jiva.workflow.runtime;
+package de.aedelmann.jiva.workflow.model;
 
 /**
  * @author Alexander Edelmann
  */
-public enum WorkflowState {
+public enum TaskState {
     CREATED("jiva.workflow.state.created"),
     READY("jiva.workflow.state.ready"),
     CLAIMED("jiva.workflow.state.claimed"),
@@ -13,7 +13,7 @@ public enum WorkflowState {
 
     String i18nKey;
 
-    WorkflowState(String i18nKey) {
+    TaskState(String i18nKey) {
         this.i18nKey = i18nKey;
     }
 
