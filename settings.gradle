@@ -1,0 +1,4 @@
+rootProject.name = 'jiva'
+include ':jiva-workflow'
+
+project(':jiva-workflow').projectDir = "$rootDir/jiva-workflow" as File
