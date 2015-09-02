@@ -7,6 +7,7 @@ import de.aedelmann.jiva.workflow.model.Comment;
 import de.aedelmann.jiva.workflow.model.WorkflowInstance;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * The workflow service allows clients to start a workflow and control its flow.
@@ -34,7 +35,7 @@ public interface WorkflowService {
      * @param workflowInstanceId
      * @return a list of all transitions available for the current step
      */
-    List<Transition> getAvailableTransitions(String workflowInstanceId);
+    Set<String> getAvailableTransitions(String workflowInstanceId);
 
     /**
      * @pre {@link WorkflowService#getAvailableTransitions(String)} contains transitionName

@@ -25,8 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 /**
@@ -69,10 +71,10 @@ public class OSWorkflowService implements WorkflowService {
     }
 
     @Override
-    public List<Transition> getAvailableTransitions(String workflowInstanceId) {
+    public Set<String> getAvailableTransitions(String workflowInstanceId) {
         OSWorkflowInstance workflowInstance = (OSWorkflowInstance)getWorkflow(workflowInstanceId);
 
-        List<Transition> transitions = new ArrayList<>();
+        Set<String> transitions = new HashSet<>();
         WorkflowDescriptor descriptor = workflowInstance.getWorkflowDescriptor();
         Map<String,Object> vars = new HashMap<>();
         vars.put("jiva.workflow",workflowInstance);
@@ -83,7 +85,8 @@ public class OSWorkflowService implements WorkflowService {
         Task currentTaskModel = workflowModel.getNodeById(descriptor.getStep(currentStep.getStepId()).getName(), Task.class);
         for (int actionId : actionIds) {
             ActionDescriptor ad = descriptor.getAction(actionId);
-            transitions.add(currentTaskModel.getTransitionByName(ad.getName()));
+
+            transitions.add(currentTaskModel.getTransitionByName(ad.getName()).getId());
 
         }
         return transitions;
@@ -91,7 +94,39 @@ public class OSWorkflowService implements WorkflowService {
 
     @Override
     public WorkflowInstance takeTransition(String workflowInstanceId, String transitionId) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        OSWorkflowInstance workflowInstance = (OSWorkflowInstance)getWorkflow(workflowInstanceId);
+        Map<String,Object> vars = new HashMap<>();
+        vars.put("jiva.workflow",workflowInstance);
+
+        ActionDescriptor ad = getActionByName(workflowInstance,transitionId);
+        if (ad == null) {
+            throw new IllegalArgumentException("Could not find transition with the given transition Id");
+        }
+
+        try {
+            workflow.doAction(workflowInstance.getOSWorkflowId(),ad.getId(),vars);
+        } catch (WorkflowException e) {
+            throw new RuntimeException("Problem take transition",e);
+        }
+
+        return getWorkflow(workflowInstanceId);
+    }
+
+    private ActionDescriptor getActionByName(OSWorkflowInstance workflowInstance, String name) {
+        Step currentStep =  (Step)workflow.getCurrentSteps(workflowInstance.getOSWorkflowId()).get(0);
+
+        WorkflowModel workflowModel = workflowInstance.getModel();
+        WorkflowDescriptor descriptor = workflowModel.getRuntimeModel(WorkflowDescriptor.class);
+
+        for (Object object : descriptor.getStep(currentStep.getStepId()).getActions()) {
+
+            ActionDescriptor ad = (ActionDescriptor)object;
+            if (ad.getName().equalsIgnoreCase(name)) {
+                return ad;
+            }
+        }
+
+        return null;
     }
 
     @Override

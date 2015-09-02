@@ -27,6 +27,9 @@ public class PeopleResolutionFunction implements FunctionProvider {
     @Override
     public void execute(Map transientVars, Map args, PropertySet propertySet) throws WorkflowException {
         OSWorkflowInstance workflowInstance = (OSWorkflowInstance) transientVars.get("jiva.workflow");
+        if (workflowInstance.getTaskState() == TaskState.READY) {
+            return;
+        }
         workflowInstance.setWorkflowInstanceId(((WorkflowEntry)transientVars.get("entry")).getId());
         workflowInstance.resolvePotentialOwners((Step) transientVars.get("createdStep"));
         workflowInstance.setTaskState(TaskState.READY);

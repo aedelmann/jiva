@@ -193,4 +193,20 @@ public class OSWorkflowInstance implements WorkflowInstance {
     public Long getOSWorkflowId() {
         return workflowInstanceId;
     }
+
+    public void claim(String userId) {
+        for (WorkItem workItem : workItems) {
+            if (workItem.getAssignee().equals(userId)) {
+                workItem.setClaimed(true);
+                setTaskState(TaskState.CLAIMED);
+            }
+        }
+    }
+
+    public void release() {
+        for (WorkItem workItem : workItems) {
+            workItem.setClaimed(false);
+        }
+        setTaskState(TaskState.READY);
+    }
 }

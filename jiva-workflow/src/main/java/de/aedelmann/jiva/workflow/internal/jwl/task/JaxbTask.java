@@ -10,6 +10,7 @@ import com.opensymphony.workflow.loader.StepDescriptor;
 import de.aedelmann.jiva.workflow.internal.engine.conditions.IsTaskStateCondition;
 import de.aedelmann.jiva.workflow.internal.engine.conditions.OnlyAssigneeCondition;
 import de.aedelmann.jiva.workflow.internal.jwl.AbstractJaxbNode;
+import de.aedelmann.jiva.workflow.internal.jwl.JaxbTransition;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.Constants;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.MappingContext;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.OSWorkflowUtils;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.aedelmann.jiva.workflow.jwl.Assignment;
+import de.aedelmann.jiva.workflow.jwl.Transition;
+import de.aedelmann.jiva.workflow.model.TaskAction;
 import de.aedelmann.jiva.workflow.model.TaskState;
 
 @XmlRootElement(name = "task")
@@ -43,11 +46,11 @@ public class JaxbTask extends AbstractJaxbNode implements Task {
     @XmlElement(type = JaxbAssignment.class)
     private Assignment assignment = null;
 
-    private static List<TaskOperation> TASK_OPERATIONS = new ArrayList<TaskOperation>();
+    private static Map<String, TaskOperation> TASK_OPERATIONS = new HashMap();
 
     static {
-        TASK_OPERATIONS.add(new ClaimTaskOperation());
-        TASK_OPERATIONS.add(new ReleaseTaskOperation());
+        TASK_OPERATIONS.put(TaskAction.Claim.getId(), new ClaimTaskOperation());
+        TASK_OPERATIONS.put(TaskAction.Release.getId(), new ReleaseTaskOperation());
     }
 
     @Override
@@ -83,7 +86,7 @@ public class JaxbTask extends AbstractJaxbNode implements Task {
 
         }
 
-        for (TaskOperation taskOperation : TASK_OPERATIONS) {
+        for (TaskOperation taskOperation : TASK_OPERATIONS.values()) {
             stepDescriptor.getActions().add(taskOperation.build(context,stepDescriptor));
         }
 
@@ -94,5 +97,14 @@ public class JaxbTask extends AbstractJaxbNode implements Task {
     @Override
     public Deadline getCompletionDeadline() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Transition getTransitionByName(String id) {
+        if (TASK_OPERATIONS.containsKey(id)) {
+            return new JaxbTransition(id,this);
+        } else {
+            return super.getLeavingTransitionByName(id);
+        }
     }
 }

@@ -7,6 +7,7 @@ import de.aedelmann.jiva.workflow.internal.engine.conditions.IsTaskStateConditio
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.OSWorkflowUtils;
 import de.aedelmann.jiva.workflow.internal.engine.conditions.OnlyAssigneeCondition;
 import de.aedelmann.jiva.workflow.internal.engine.functions.taskoperations.ReleaseTaskFunction;
+import de.aedelmann.jiva.workflow.model.TaskAction;
 import de.aedelmann.jiva.workflow.model.TaskState;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class ReleaseTaskOperation extends AbstractTaskOperation {
 
 
     public ReleaseTaskOperation() {
-        super("jiva.taskoperation.release");
+        super(TaskAction.Release);
     }
 
     @Override

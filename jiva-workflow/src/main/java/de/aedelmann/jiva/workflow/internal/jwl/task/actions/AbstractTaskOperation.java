@@ -11,6 +11,7 @@ import com.opensymphony.workflow.loader.StepDescriptor;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.Constants;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.MappingContext;
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.OSWorkflowUtils;
+import de.aedelmann.jiva.workflow.model.TaskAction;
 
 import java.util.List;
 
@@ -19,10 +20,10 @@ import java.util.List;
  */
 public abstract class AbstractTaskOperation implements TaskOperation {
 
-    private String operationId;
+    private TaskAction action;
 
-    public AbstractTaskOperation(String operationId) {
-        this.operationId = operationId;
+    public AbstractTaskOperation(TaskAction action) {
+        this.action = action;
     }
 
     @Override
@@ -30,7 +31,7 @@ public abstract class AbstractTaskOperation implements TaskOperation {
         DescriptorFactory factory = new DescriptorFactory();
         ActionDescriptor ad = factory.createActionDescriptor();
         ad.setId(context.getActionGenerator().next());
-        ad.setName(operationId);
+        ad.setName(action.getId());
         ad.setAutoExecute(false);
 
         ResultDescriptor ur = factory.createResultDescriptor();

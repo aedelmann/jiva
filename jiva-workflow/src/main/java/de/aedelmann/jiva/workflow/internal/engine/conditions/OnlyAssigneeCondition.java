@@ -4,6 +4,7 @@ import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.Condition;
 import com.opensymphony.workflow.WorkflowException;
 import de.aedelmann.jiva.workflow.internal.model.OSWorkflowInstance;
+import de.aedelmann.jiva.workflow.model.WorkflowEnvironment;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -16,6 +17,6 @@ public class OnlyAssigneeCondition implements Condition {
     @Override
     public boolean passesCondition(Map transientVars, Map map2, PropertySet propertySet) throws WorkflowException {
         OSWorkflowInstance workflowInstance = (OSWorkflowInstance)transientVars.get("jiva.workflow");
-        return workflowInstance.getPotentialOwners().contains(workflowInstance.getInitiator());
+        return workflowInstance.getPotentialOwners().contains(WorkflowEnvironment.current().getCurrentUserId());
     }
 }

@@ -7,6 +7,7 @@ import de.aedelmann.jiva.workflow.internal.engine.conditions.OnlyAssigneeConditi
 import de.aedelmann.jiva.workflow.internal.jwl.mapping.OSWorkflowUtils;
 import de.aedelmann.jiva.workflow.internal.engine.conditions.IsAssignedCondition;
 import de.aedelmann.jiva.workflow.internal.engine.functions.taskoperations.ClaimTaskFunction;
+import de.aedelmann.jiva.workflow.model.TaskAction;
 import de.aedelmann.jiva.workflow.model.TaskState;
 
 import java.util.ArrayList;
@@ -21,12 +22,12 @@ public class ClaimTaskOperation extends AbstractTaskOperation {
 
 
     public ClaimTaskOperation() {
-        super("jiva.taskoperation.claim");
+        super(TaskAction.Claim);
     }
 
     @Override
     protected List<ConditionDescriptor> buildConditions() {
-        List<ConditionDescriptor> conditions = new ArrayList<ConditionDescriptor>();
+        List<ConditionDescriptor> conditions = new ArrayList<>();
         Map<String, String> taskStateConditionParams = new HashMap<String, String>() {{
             put(IsTaskStateCondition.PARAM, TaskState.READY.name());
         }};
