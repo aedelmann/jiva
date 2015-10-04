@@ -1,5 +1,6 @@
 package de.aedelmann.jiva.workflow.internal;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,15 +14,12 @@ import de.aedelmann.jiva.workflow.engine.Execution;
 import de.aedelmann.jiva.workflow.engine.WorkflowEnvironment;
 import de.aedelmann.jiva.workflow.engine.WorkflowExecution;
 import de.aedelmann.jiva.workflow.engine.WorkflowState;
-import de.aedelmann.jiva.workflow.extensionpoints.WorkflowAction;
-import de.aedelmann.jiva.workflow.extensionpoints.WorkflowContext;
-import de.aedelmann.jiva.workflow.extensionpoints.WorkflowValidator;
+import de.aedelmann.jiva.workflow.extensionpoints.WorkflowCondition;
 import de.aedelmann.jiva.workflow.internal.dao.WorkflowInstanceRepository;
 import de.aedelmann.jiva.workflow.internal.engine.StepExecutionImpl;
 import de.aedelmann.jiva.workflow.internal.engine.WorkflowContextImpl;
 import de.aedelmann.jiva.workflow.internal.engine.WorkflowExecutionImpl;
 import de.aedelmann.jiva.workflow.jwl.End;
-import de.aedelmann.jiva.workflow.jwl.Start;
 import de.aedelmann.jiva.workflow.jwl.Step;
 import de.aedelmann.jiva.workflow.jwl.Transition;
 import de.aedelmann.jiva.workflow.jwl.WorkflowModel;
@@ -50,6 +48,7 @@ public class DefaultWorkflowService implements WorkflowService {
 		workflowInstance.start(variables);
 		
 		workflowInstance.setState(WorkflowState.ACTIVE);
+		
 		dao.save(workflowInstance);
 		
 		return workflowInstance;
@@ -57,19 +56,36 @@ public class DefaultWorkflowService implements WorkflowService {
 
 	@Override
 	public Set<String> getAvailableTransitions(long workflowInstanceId, Map<String, Object> variables) {
-		return null;
+		Set<String> availableTransitions = new HashSet<>();
+		WorkflowExecutionImpl workflowExecution = dao.findOne(workflowInstanceId);
+		WorkflowModel workflowModel = this.modelStore.getModel(workflowExecution.getName());
+		for (Execution currentExecution : workflowExecution.getActiveExecutions()) {
+			StepExecutionImpl stepExecution = (StepExecutionImpl)currentExecution;
+			Step stepModel = workflowModel.getStep(stepExecution.getName());
+			for (Transition transition : stepModel.getTransitions()) {
+				availableTransitions.add(transition.getName());
+				for (WorkflowCondition condition : transition.getConditions()) {
+					boolean passes = condition.passesCondition(new WorkflowContextImpl(currentExecution,stepModel,variables));
+					if (!passes) {
+						availableTransitions.remove(transition.getName());
+					}
+				}
+			}
+		}
+		return availableTransitions;
 	}
 
 	@Override
 	public WorkflowExecution takeTransition(long workflowInstanceId, String transitionName,
 			Map<String, Object> variables) {
-		WorkflowExecutionImpl workflowInstance =  dao.findOne(workflowInstanceId);
+		WorkflowExecutionImpl workflowInstance =  (WorkflowExecutionImpl)getWorkflow(workflowInstanceId);
 		
 		WorkflowModel workflowModel = modelStore.getModel(workflowInstance.getName());
 		
 		for (Execution currentExecution : workflowInstance.getActiveExecutions()) {
-			Transition transitionToTake = workflowModel.getStep(currentExecution.getName()).getTransitionByName(transitionName);
-			if (transitionToTake != null && isTransitionAvailable(currentExecution, transitionToTake, variables)) {
+			final Step stepModel = workflowModel.getStep(currentExecution.getName());
+			Transition transitionToTake = stepModel.getTransitionByName(transitionName);
+			if (transitionToTake != null && isTransitionAvailable(currentExecution, stepModel, transitionToTake, variables)) {
 				workflowInstance.takeTransition(currentExecution, transitionToTake, variables);
 				if (isWorkflowFinished(workflowInstance, transitionToTake)) {
 					workflowInstance.complete();
@@ -82,7 +98,14 @@ public class DefaultWorkflowService implements WorkflowService {
 		return workflowInstance;
 	}
 	
-	private boolean isTransitionAvailable(Execution execution, Transition transition, Map<String,Object> variables) {
+	private boolean isTransitionAvailable(Execution execution, Step model, Transition transition, Map<String,Object> variables) {
+		for (WorkflowCondition condition : transition.getConditions()) {
+			boolean passes = condition.passesCondition(new WorkflowContextImpl(execution,model,variables));
+			if (!passes) {
+				return false;
+			}
+		}
+		
 		return true;
 	}
 	
@@ -93,7 +116,7 @@ public class DefaultWorkflowService implements WorkflowService {
 	@Override
 	public WorkflowExecution getWorkflow(long workflowInstanceId) {
 		WorkflowExecutionImpl workflowInstance =  dao.findOne(workflowInstanceId);
-		
+		workflowInstance.setWorkflowModel(modelStore.getModel(workflowInstance.getName()));
 		return workflowInstance;
 	}
 

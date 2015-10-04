@@ -3,6 +3,7 @@ package de.aedelmann.jiva.workflow.jwl;
 import java.util.List;
 
 import de.aedelmann.jiva.workflow.extensionpoints.WorkflowAction;
+import de.aedelmann.jiva.workflow.extensionpoints.WorkflowCondition;
 import de.aedelmann.jiva.workflow.extensionpoints.WorkflowValidator;
 
 /**
@@ -15,6 +16,8 @@ public interface Transition extends BaseElement {
     List<WorkflowValidator> getValidators();
 
 	List<WorkflowAction> getActions();
+	
+	List<WorkflowCondition> getConditions();
 
 	Step getParent();
 }

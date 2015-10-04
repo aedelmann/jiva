@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.aedelmann.jiva.workflow.extensionpoints.WorkflowAction;
+import de.aedelmann.jiva.workflow.extensionpoints.WorkflowCondition;
 import de.aedelmann.jiva.workflow.extensionpoints.WorkflowModelExtension;
-import de.aedelmann.jiva.workflow.extensionpoints.WorkflowPermission;
 import de.aedelmann.jiva.workflow.extensionpoints.WorkflowValidator;
 import de.aedelmann.jiva.workflow.jwl.ModelValidationProblem;
 import de.aedelmann.jiva.workflow.jwl.Step;
@@ -23,7 +23,7 @@ public class TransitionImpl extends WorkflowElement implements Transition {
 
     private List<WorkflowAction> actions = new ArrayList<WorkflowAction>();
     
-    private List<WorkflowPermission> permissions = new ArrayList<WorkflowPermission>();
+    private List<WorkflowCondition> conditions = new ArrayList<WorkflowCondition>();
 
 	private List<WorkflowValidator> validators = new ArrayList<WorkflowValidator>();
 
@@ -51,12 +51,12 @@ public class TransitionImpl extends WorkflowElement implements Transition {
         this.actions = actions;
     }
     
-    public List<WorkflowPermission> getPermissions() {
-		return permissions;
+    public List<WorkflowCondition> getConditions() {
+		return conditions;
 	}
 
-	public void setPermissions(List<WorkflowPermission> permissions) {
-		this.permissions = permissions;
+	public void setConditions(List<WorkflowCondition> conditions) {
+		this.conditions = conditions;
 	}
 
 
@@ -102,7 +102,7 @@ public class TransitionImpl extends WorkflowElement implements Transition {
 
         List<WorkflowModelExtension> allExtensions = new ArrayList<WorkflowModelExtension>(getActions());
         allExtensions.addAll(getValidators());
-        allExtensions.addAll(getPermissions());
+        allExtensions.addAll(getConditions());
         
         for (WorkflowModelExtension extension : allExtensions) {
             extension.validate();

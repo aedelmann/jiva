@@ -79,5 +79,12 @@ public class WorkflowServiceTest {
     	assertEquals(0,workflowInstance.getActiveExecutions().size());
     	assertEquals(2,workflowInstance.getCompletedExecutions().size());
     }
+    
+    @Test
+    public void testGetAvailableTransitions() {
+    	registerModel("sample.jwl");
+    	WorkflowExecution workflowInstance =  workflowService.startWorkflow("approval", Collections.emptyMap());
+    	assertEquals(2,workflowService.getAvailableTransitions(workflowInstance.getId(), Collections.emptyMap()).size());
+    }
 
 }

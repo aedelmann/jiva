@@ -9,6 +9,7 @@ import org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor;
 import de.aedelmann.jiva.workflow.internal.engine.StepExecutionImpl;
 import de.aedelmann.jiva.workflow.internal.engine.WorkItem;
 import de.aedelmann.jiva.workflow.internal.engine.WorkflowExecutionImpl;
+import de.aedelmann.jiva.workflow.internal.engine.history.HistoryStepExecutionImpl;
 
 /**
  * @author Alexander Edelmann
@@ -22,6 +23,7 @@ public class WorkflowPersistenceUnitPostProcessor implements PersistenceUnitPost
         ENTITY_CLASSES.add(WorkflowExecutionImpl.class.getName());
         ENTITY_CLASSES.add(WorkItem.class.getName());
         ENTITY_CLASSES.add(StepExecutionImpl.class.getName());
+        ENTITY_CLASSES.add(HistoryStepExecutionImpl.class.getName());
     }
 
 

@@ -75,6 +75,10 @@ public class WorkflowExecutionImpl extends AbstractExecution implements Workflow
     	this.createdOn = new Date();
     	this.initiator = initiator;
 	}
+    
+    public void setWorkflowModel(WorkflowModel model) {
+    	this.workflowModel = model;
+    }
 
     @Override
     public String getInitiator() {
@@ -186,6 +190,6 @@ public class WorkflowExecutionImpl extends AbstractExecution implements Workflow
 			this.historySteps.add(new HistoryStepExecutionImpl(current));
 			iter.remove();
 		}
-		
 	}
+
 }

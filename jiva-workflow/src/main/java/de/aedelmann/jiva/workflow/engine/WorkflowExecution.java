@@ -21,4 +21,5 @@ public interface WorkflowExecution extends Execution {
     boolean isCompleted();
     
     Date getCompletedOn();
+ 
 }
