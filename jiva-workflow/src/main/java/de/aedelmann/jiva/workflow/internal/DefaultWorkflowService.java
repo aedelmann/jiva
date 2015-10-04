@@ -64,15 +64,23 @@ public class DefaultWorkflowService implements WorkflowService {
 			Step stepModel = workflowModel.getStep(stepExecution.getName());
 			for (Transition transition : stepModel.getTransitions()) {
 				availableTransitions.add(transition.getName());
-				for (WorkflowCondition condition : transition.getConditions()) {
-					boolean passes = condition.passesCondition(new WorkflowContextImpl(currentExecution,stepModel,variables));
-					if (!passes) {
-						availableTransitions.remove(transition.getName());
-					}
+				if (!isTransitionAvailable(stepExecution, stepModel, transition, variables)) {
+					availableTransitions.remove(transition.getName());
 				}
 			}
 		}
 		return availableTransitions;
+	}
+	
+	private boolean isTransitionAvailable(Execution execution, Step model, Transition transition, Map<String,Object> variables) {
+		for (WorkflowCondition condition : transition.getConditions()) {
+			boolean passes = condition.passesCondition(new WorkflowContextImpl(execution,model,variables));
+			if (!passes) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	@Override
@@ -96,17 +104,6 @@ public class DefaultWorkflowService implements WorkflowService {
 		
 		dao.save(workflowInstance);
 		return workflowInstance;
-	}
-	
-	private boolean isTransitionAvailable(Execution execution, Step model, Transition transition, Map<String,Object> variables) {
-		for (WorkflowCondition condition : transition.getConditions()) {
-			boolean passes = condition.passesCondition(new WorkflowContextImpl(execution,model,variables));
-			if (!passes) {
-				return false;
-			}
-		}
-		
-		return true;
 	}
 	
 	private boolean isWorkflowFinished(WorkflowExecution workflowInstance, Transition takenTransition) {
