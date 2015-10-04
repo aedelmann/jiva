@@ -1,12 +1,6 @@
 package de.aedelmann.jiva.workflow.jwl;
 
-
-/**
- * @author Alexander Edelmann
- */
-public interface BaseElement {
-
-    String getId();
+public interface BaseElement extends Validatable {
 
     String getName();
 

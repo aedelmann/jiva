@@ -1,13 +1,10 @@
 package de.aedelmann.jiva.workflow;
 
 
-import de.aedelmann.jiva.workflow.jwl.Transition;
-import de.aedelmann.jiva.workflow.model.Attachment;
-import de.aedelmann.jiva.workflow.model.Comment;
-import de.aedelmann.jiva.workflow.model.WorkflowInstance;
-
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import de.aedelmann.jiva.workflow.engine.WorkflowExecution;
 
 /**
  * The workflow service allows clients to start a workflow and control its flow.
@@ -20,32 +17,34 @@ public interface WorkflowService {
      * starts a new workflow for a deployed workflow model by executing the
      * firstly defined workflow step.
      *
-     * @pre {@link DeploymentService#getDeployment(String) != null}
+     * @pre {@link WorkflowModelStore#getDeployment(String) != null}
      * @post workflow was created in persistent storage
      *
      * @param deploymentId
-     * @throws de.aedelmann.jiva.workflow.model.WorkflowNotFoundException
-     * @return newly created workflow instance.
+     * @throws de.aedelmann.jiva.workflow.engine.WorkflowNotFoundException
+     * @return newly created workflow execution.
      */
-    WorkflowInstance startWorkflow(String deploymentId);
+    WorkflowExecution startWorkflow(String workflowName, Map<String,Object> variables);
 
     /**
      * @pre {@link WorkflowService#startWorkflow(String)}
      * Fetches all transitions that the conditions are allowing to be taken
      * @param workflowInstanceId
+     * @param variables transient variables passed to the workflow 
      * @return a list of all transitions available for the current step
      */
-    Set<String> getAvailableTransitions(String workflowInstanceId);
+    Set<String> getAvailableTransitions(long workflowInstanceId, Map<String,Object> variables);
 
     /**
      * @pre {@link WorkflowService#getAvailableTransitions(String)} contains transitionName
      * @post modified workflow instance in the new step the taken transition was pointing to
      * Takes the transition for the specified workflow instance
      * @param workflowInstanceId
-     * @param transitionId
+     * @param transitionName
+     * @param variables transient variables passed to the workflow
      * @return
      */
-    WorkflowInstance takeTransition(String workflowInstanceId, String transitionId);
+    WorkflowExecution takeTransition(long workflowInstanceId, String transitionName, Map<String,Object> variables);
 
     /**
      * gets a specific workflow instance by its id
@@ -53,45 +52,6 @@ public interface WorkflowService {
      * @param workflowInstanceId
      * @return active or completed workflow instance, can be null
      */
-    WorkflowInstance getWorkflow(String workflowInstanceId);
+    WorkflowExecution getWorkflow(long workflowInstanceId);
 
-    /**
-     * Adds a new comment to the workflow
-     * @param workflowInstanceId
-     * @param comment
-     * @return the newly created comment
-     */
-    Comment addComment(String workflowInstanceId, String comment);
-
-    /**
-     * Adds a new reply for an existing comment
-     * @param commentId id of the comment this reply is for
-     * @param message actual content of the message
-     * @return the newly created reply comment
-     */
-    Comment addCommentReply(String commentId, String message);
-
-    /**
-     * Adds a new attachment to a workflow instance
-     * @param workflowInstanceId
-     * @param name
-     * @param contentType content specific type
-     * @param data actual attachment data
-     * @return the newly created attachment that was attached to the workflow instance
-     */
-    Attachment addAttachment(String workflowInstanceId, String name, String contentType, byte[] data);
-
-    /**
-     * Gets a list of all attachments for a workflow instance
-     * @param workflowInstanceId
-     * @return
-     */
-    public List<Attachment> getAttachments(String workflowInstanceId);
-
-    /**
-     * Gets a list of all comments for a workflow instance
-     * @param workflowInstanceId
-     * @return
-     */
-    public List<Comment> getComments(String workflowInstanceId);
 }

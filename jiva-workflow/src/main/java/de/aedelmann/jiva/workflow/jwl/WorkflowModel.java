@@ -3,13 +3,12 @@ package de.aedelmann.jiva.workflow.jwl;
 /**
  * @author Alexander Edelmann
  */
-public interface WorkflowModel extends BaseElement, DeadlineAware {
+public interface WorkflowModel extends BaseElement {
 
     Start getStart();
 
-    <NodeElement extends Node> NodeElement getNodeById(String nodeId,Class<NodeElement> expectedNode);
-
     String getXml();
+    
+    Step getStep(String name);
 
-    <RuntimeModel> RuntimeModel getRuntimeModel(Class<RuntimeModel> runtimeModelClass);
 }
