@@ -1,8 +1,8 @@
 package de.aedelmann.jiva.workflow.jwl;
 
-import de.aedelmann.jiva.workflow.assignment.PeopleResolutionProvider;
-
 import java.util.List;
+
+import de.aedelmann.jiva.workflow.extensionpoints.PeopleResolutionProvider;
 
 /**
  * @author Alexander Edelmann

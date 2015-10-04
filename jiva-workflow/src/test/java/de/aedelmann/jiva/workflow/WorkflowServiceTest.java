@@ -1,109 +1,83 @@
 package de.aedelmann.jiva.workflow;
 
-import com.opensymphony.workflow.loader.WorkflowDescriptor;
-import de.aedelmann.jiva.workflow.deployment.Deployment;
-import de.aedelmann.jiva.workflow.jwl.Transition;
-import de.aedelmann.jiva.workflow.model.TaskAction;
-import de.aedelmann.jiva.workflow.model.TaskState;
-import de.aedelmann.jiva.workflow.model.WorkflowEnvironment;
-import de.aedelmann.jiva.workflow.model.WorkflowInstance;
-import de.aedelmann.jiva.workflow.model.WorkflowNotFoundException;
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertEquals;
+import de.aedelmann.jiva.workflow.engine.WorkflowEnvironment;
+import de.aedelmann.jiva.workflow.engine.WorkflowExecution;
+import de.aedelmann.jiva.workflow.engine.WorkflowState;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationcontext.xml"})
-public class WorkflowServiceTest extends WorkflowTest {
+@Transactional
+public class WorkflowServiceTest {
 
+	@Autowired
+	private WorkflowService workflowService;
+	
+	@Autowired
+	private WorkflowModelStore modelStore;
+	
     @Before
     public void setupTest() {
         WorkflowEnvironment.setCurrentUserId("alex");
     }
-
-    @Test (expected = WorkflowNotFoundException.class)
-    public void testStartUndeployedWorkflow() {
-        workflowService.startWorkflow("dummyId");
+    
+    protected void registerModel(String workflowFile) {
+    	try {
+			modelStore.addModel(new ClassPathResource(workflowFile).getInputStream());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+    }
+    
+    @Test
+    public void testStartWorkflow()  {
+    	registerModel("sample.jwl");
+    	WorkflowExecution startedWorkflow =  workflowService.startWorkflow("approval", Collections.emptyMap());
+    	assertNotNull(startedWorkflow.getId());
+    	assertNotNull(startedWorkflow.getCreatedOn());
+    	assertEquals("alex",startedWorkflow.getInitiator());
+    	assertEquals("approval",startedWorkflow.getName());
+    	assertEquals(WorkflowState.ACTIVE,startedWorkflow.getState());
+    }
+    
+    @Test
+    public void testGetCurrentStepOfStartedWorkflow()  {
+    	registerModel("sample.jwl");
+    	WorkflowExecution startedWorkflow =  workflowService.startWorkflow("approval", Collections.emptyMap());
+    	assertEquals(1,startedWorkflow.getActiveExecutions().size());
+    	assertEquals("managerApproval",startedWorkflow.getActiveExecutions().get(0).getName());
     }
 
     @Test
-    public void testStartWorkflow() {
-        Deployment deployment = deployWorkflow("sample.jwl");
-        WorkflowInstance workflowInstance = workflowService.startWorkflow(deployment.getId());
-        assertNotNull(workflowInstance);
-        assertNotNull(workflowInstance.getCreatedOn());
-        assertEquals("alex",workflowInstance.getInitiator());
-        assertTrue(Long.parseLong(workflowInstance.getId()) > 0);
-        assertFalse(workflowInstance.isCompleted());
-        assertNotNull(workflowInstance.getModel());
+    public void testFindWorkflowByInstanceId() {
+    	registerModel("sample.jwl");
+    	WorkflowExecution startedWorkflow =  workflowService.startWorkflow("approval", Collections.emptyMap());
+    	assertNotNull(workflowService.getWorkflow(startedWorkflow.getId()));
     }
-
+    
     @Test
-    public void testGetAssigneesOfWorkflow() {
-        Deployment deployment = deployWorkflow("sample.jwl");
-        WorkflowInstance workflowInstance = workflowService.startWorkflow(deployment.getId());
-        assertEquals(2, workflowInstance.getPotentialOwners().size());
-        assertTrue(workflowInstance.getPotentialOwners().contains("alex"));
-        assertTrue(workflowInstance.getPotentialOwners().contains("jugal"));
-    }
-
-    @Test
-    public void testGetWorkflowById() {
-        Deployment deployment = deployWorkflow("sample.jwl");
-        WorkflowInstance workflowInstance = workflowService.startWorkflow(deployment.getId());
-        assertEquals(workflowInstance,workflowService.getWorkflow(workflowInstance.getId()));
-    }
-
-    @Test
-    public void testGetAvailableTransitionsOfNonPotentialOwner() {
-        Deployment deployment = deployWorkflow("sample.jwl");
-
-        WorkflowEnvironment.setCurrentUserId("max");
-        WorkflowInstance workflowInstance = workflowService.startWorkflow(deployment.getId());
-        assertEquals(0, workflowService.getAvailableTransitions(workflowInstance.getId()).size());
-    }
-
-    @Test
-    public void testGetAvailableTransitionsOfUnclaimedWorkflowPotentialOwner() {
-        Deployment deployment = deployWorkflow("sample.jwl");
-        WorkflowEnvironment.setCurrentUserId("jugal");
-        WorkflowInstance workflowInstance = workflowService.startWorkflow(deployment.getId());
-        assertEquals(1, workflowService.getAvailableTransitions(workflowInstance.getId()).size());
-        assertEquals(TaskAction.Claim.getId(),workflowService.getAvailableTransitions(workflowInstance.getId()).toArray()[0]);
-    }
-
-    @Test
-    public void testClaimWorkflowInstance() {
-        Deployment deployment = deployWorkflow("sample.jwl");
-        WorkflowEnvironment.setCurrentUserId("jugal");
-        WorkflowInstance workflowInstance = workflowService.startWorkflow(deployment.getId());
-        String claimTransition = (String)workflowService.getAvailableTransitions(workflowInstance.getId()).toArray()[0];
-        workflowInstance = workflowService.takeTransition(workflowInstance.getId(),claimTransition);
-        assertEquals(TaskState.CLAIMED,workflowInstance.getTaskState());
-        assertEquals("jugal",workflowInstance.getActualOwner());
-    }
-
-    @Test
-    public void testReleaseWorkflowInstance() {
-        Deployment deployment = deployWorkflow("sample.jwl");
-        WorkflowEnvironment.setCurrentUserId("jugal");
-        WorkflowInstance workflowInstance = workflowService.startWorkflow(deployment.getId());
-        workflowInstance = workflowService.takeTransition(workflowInstance.getId(),TaskAction.Claim.getId());
-        assertEquals(TaskState.CLAIMED,workflowInstance.getTaskState());
-
-        assertTrue(workflowService.getAvailableTransitions(workflowInstance.getId()).contains(TaskAction.Release.getId()));
-
-        workflowInstance = workflowService.takeTransition(workflowInstance.getId(),TaskAction.Release.getId());
-        assertEquals(TaskState.READY,workflowInstance.getTaskState());
-        assertNull(workflowInstance.getActualOwner());
+    public void testTakeTransition() {
+    	registerModel("sample.jwl");
+    	WorkflowExecution workflowInstance =  workflowService.startWorkflow("approval", Collections.emptyMap());
+    	workflowInstance = workflowService.takeTransition(workflowInstance.getId(), "Approve", Collections.emptyMap());
+    	assertTrue(workflowInstance.isCompleted());
+    	assertNotNull(workflowInstance.getCompletedOn());
+    	assertEquals(WorkflowState.ENDED,workflowInstance.getState());
+    	assertEquals(0,workflowInstance.getActiveExecutions().size());
+    	assertEquals(2,workflowInstance.getCompletedExecutions().size());
     }
 
 }

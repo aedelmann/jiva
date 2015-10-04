@@ -17,43 +17,6 @@
 
     <jpa:repositories base-package="de.aedelmann.jiva.workflow.internal.dao"></jpa:repositories>
 
-    <bean id="typeResolver" class="com.opensymphony.workflow.util.SpringTypeResolver"/>
-
-    <bean id="workflowStore" class="de.aedelmann.jiva.workflow.internal.engine.WorkflowStoreJPA"/>
-
-    <bean id="workflowFactory" class="de.aedelmann.jiva.workflow.internal.engine.DefaultWorkflowStoreFactory"/>
-
-    <bean id="osworkflowConfiguration" class="com.opensymphony.workflow.config.SpringConfiguration">
-        <property name="store"><ref bean="workflowStore"/></property>
-        <property name="factory"><ref bean="workflowFactory"/></property>
-    </bean>
-
-    <bean id="workflowTarget" class="de.aedelmann.jiva.workflow.internal.engine.JivaWorkflow" scope="prototype">
-        <property name="configuration"><ref bean="osworkflowConfiguration"/></property>
-        <property name="resolver"><ref bean="typeResolver"/></property>
-    </bean>
-
-
-    <bean id="workflow" class="org.springframework.aop.framework.ProxyFactoryBean">
-        <property name="singleton" value="false"/>
-        <property name="proxyInterfaces" value="com.opensymphony.workflow.Workflow"/>
-        <property name="interceptorNames">
-            <list>
-                <value>transactionInterceptor</value>
-                <value>workflowTarget</value>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="transactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
-        <property name="transactionManager"><ref bean="transactionManager"/></property>
-        <property name="transactionAttributes">
-            <props>
-                <prop key="*">PROPAGATION_REQUIRED</prop>
-            </props>
-        </property>
-    </bean>
-
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
@@ -77,7 +40,7 @@
           class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
         <property name="persistenceUnitPostProcessors">
             <bean
-                    class="de.aedelmann.jiva.workflow.internal.engine.WorkflowPersistenceUnitPostProcessor" />
+                    class="de.aedelmann.jiva.workflow.internal.dao.WorkflowPersistenceUnitPostProcessor" />
         </property>
         <property name="defaultDataSource" ref="dataSource" />
     </bean>
