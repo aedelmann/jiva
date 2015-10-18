@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow name="approval" xmlns="http://www.github.com/aedelmann/jiva/workflow/jwl">
 	 <start>
-	 	<transition name="request" to="#managerApproval"/>
+	 	<transition name="request" to="#managerApproval">
+	 		<validators>
+	 			<script lang="groovy" xmlns="http://www.github.com/aedelmann/jiva/workflow/extensions/validator">
+	 				<expression>
+	 				import de.aedelmann.jiva.workflow.extensionpoints.WorkflowValidator.InvalidInputException;
+	 				if (context.variables['validate'] == false) {
+	 					throw new InvalidInputException("invalid");	
+	 				}
+	 				</expression>
+	 			</script>
+	 		</validators>
+	 		<actions>
+	 			<script lang="groovy" xmlns="http://www.github.com/aedelmann/jiva/workflow/extensions/action">
+	 				<expression>
+	 					println("Starting workflow...")
+	 				</expression>
+	 			</script>
+	 		</actions>
+	 	</transition>
 	 </start>
 
 	 <step name="managerApproval">

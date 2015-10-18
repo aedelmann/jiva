@@ -1,6 +1,6 @@
 package de.aedelmann.jiva.workflow.jwl;
 
-import de.aedelmann.jiva.workflow.script.Query;
+import de.aedelmann.jiva.workflow.script.Script;
 
 import java.util.Date;
 
@@ -9,5 +9,5 @@ import java.util.Date;
  */
 public interface Deadline {
 
-    Query<Date> getQuery();
+    Script<Date> getQuery();
 }

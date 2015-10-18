@@ -1,14 +1,14 @@
 
 description = 'Workflow Engine'
 dependencies {
+	compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.3'
 	compile group: 'com.thoughtworks.qdox', name:'qdox', version: '1.9'
 	compile group: 'commons-lang', name:'commons-lang', version: '2.4'
 	compile group: 'org.apache.xbean', name: 'xbean-spring', version: '3.7'
     compile group: 'org.springframework', name: 'spring-context', version:'4.2.0.RELEASE'
     compile group: 'commons-io', name: 'commons-io', version:'2.4'
-    compile group: 'org.springframework', name: 'spring-orm', version:'4.2.0.RELEASE'
-    compile group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final'
-    compile group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final'
+    testCompile group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final'
+    testCompile group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final'
     compile group: 'org.springframework.data', name: 'spring-data-jpa', version:'1.8.2.RELEASE'
     testCompile group: 'junit', name: 'junit', version:'4.12'
     testCompile group: 'org.springframework', name: 'spring-test', version:'4.2.0.RELEASE'

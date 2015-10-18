@@ -32,17 +32,8 @@
     <bean id="entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="jpaVendorAdapter" ref="JPAAdapter" />
-        <property name="persistenceUnitManager" ref="pum" />
-    </bean>
-
-
-    <bean id="pum"
-          class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
-        <property name="persistenceUnitPostProcessors">
-            <bean
-                    class="de.aedelmann.jiva.workflow.internal.dao.WorkflowPersistenceUnitPostProcessor" />
-        </property>
-        <property name="defaultDataSource" ref="dataSource" />
+        <property name="packagesToScan" value="de.aedelmann.jiva"/>
+         <property name="dataSource" ref="dataSource" />
     </bean>
 
     <jdbc:embedded-database id="dataSource" type="H2" />

@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import de.aedelmann.jiva.workflow.engine.WorkflowEnvironment;
 import de.aedelmann.jiva.workflow.engine.WorkflowExecution;
 import de.aedelmann.jiva.workflow.engine.WorkflowState;
+import de.aedelmann.jiva.workflow.extensionpoints.WorkflowValidator.InvalidInputException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationcontext.xml"})
@@ -85,6 +88,22 @@ public class WorkflowServiceTest {
     	registerModel("sample.jwl");
     	WorkflowExecution workflowInstance =  workflowService.startWorkflow("approval", Collections.emptyMap());
     	assertEquals(2,workflowService.getAvailableTransitions(workflowInstance.getId(), Collections.emptyMap()).size());
+    }
+    
+    @Test (expected = InvalidInputException.class)
+    public void testStartWorkflowWithValidator() throws Exception {
+    	registerModel("sample.jwl");
+    	Map<String, Object> vars = new HashMap<>();
+    	vars.put("validate", false);
+    	workflowService.startWorkflow("approval", vars);
+    }
+    
+    @Test
+    public void testStartWorkflowWithValidator2() throws Exception {
+    	registerModel("sample.jwl");
+    	Map<String, Object> vars = new HashMap<>();
+    	vars.put("validate", true);
+    	assertNotNull(workflowService.startWorkflow("approval", vars));
     }
 
 }

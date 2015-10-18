@@ -281,6 +281,11 @@
             <xs:sequence minOccurs='0' maxOccurs='1'><xs:any minOccurs='0' maxOccurs='unbounded'/></xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name='conditions' minOccurs='0' maxOccurs='1'>
+          <xs:complexType>
+            <xs:sequence minOccurs='0' maxOccurs='unbounded'><xs:any minOccurs='0' maxOccurs='unbounded'/></xs:sequence>
+          </xs:complexType>
+        </xs:element>
         <xs:element name='parent' minOccurs='0' maxOccurs='1'>
           <xs:complexType>
             <xs:choice minOccurs='0' maxOccurs='1'>
@@ -291,11 +296,6 @@
               <xs:element ref='tns:step'/>
               <xs:any namespace='##other'/>
             </xs:choice>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name='permissions' minOccurs='0' maxOccurs='1'>
-          <xs:complexType>
-            <xs:sequence minOccurs='0' maxOccurs='unbounded'><xs:any minOccurs='0' maxOccurs='unbounded'/></xs:sequence>
           </xs:complexType>
         </xs:element>
         <xs:element name='properties' minOccurs='0' maxOccurs='1'>
