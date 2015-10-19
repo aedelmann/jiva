@@ -6,7 +6,7 @@
 	 			<script lang="groovy" xmlns="http://www.github.com/aedelmann/jiva/workflow/extensions/validator">
 	 				<expression>
 	 				import de.aedelmann.jiva.workflow.extensionpoints.WorkflowValidator.InvalidInputException;
-	 				if (context.variables['validate'] == false) {
+	 				if (execution.variables['validate'] == false) {
 	 					throw new InvalidInputException("invalid");	
 	 				}
 	 				</expression>

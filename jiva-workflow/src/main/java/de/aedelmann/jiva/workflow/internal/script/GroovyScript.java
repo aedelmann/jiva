@@ -7,7 +7,7 @@ import de.aedelmann.jiva.workflow.script.Script;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 
-public class GroovyExpression implements Script<Object> {
+public class GroovyScript implements Script<Object> {
 
     static final String LANG_KEY = "groovy";
 	
@@ -16,7 +16,7 @@ public class GroovyExpression implements Script<Object> {
 	private GroovyShell shell = null;
 	private Binding binding = null;
 	
-	public GroovyExpression(String value) {
+	public GroovyScript(String value) {
 		this.value = value;
 		binding = new Binding();
         CompilerConfiguration cc = new CompilerConfiguration();
@@ -30,7 +30,8 @@ public class GroovyExpression implements Script<Object> {
 
 	@Override
 	public Object evaluate(WorkflowContext ctx) {
-		binding.setVariable("context", ctx);
+		binding.setVariable("execution", ctx.getExecution());
+		binding.setVariable("model", ctx.getModel());
         try {
             return shell.evaluate(value);
         } catch (Exception ex) {

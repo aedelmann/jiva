@@ -34,6 +34,14 @@ public interface WorkflowService {
      * @return a list of all transitions available for the current step
      */
     Set<String> getAvailableTransitions(long workflowInstanceId, Map<String,Object> variables);
+    
+    /**
+     * @pre {@link WorkflowService#startWorkflow(String)}
+     * Fetches all transitions that the conditions are allowing to be taken
+     * @param workflowInstanceId
+     * @return a list of all transitions available for the current step
+     */
+    Set<String> getAvailableTransitions(long workflowInstanceId);
 
     /**
      * @pre {@link WorkflowService#getAvailableTransitions(String)} contains transitionName

@@ -2,7 +2,9 @@ package de.aedelmann.jiva.workflow.internal.engine;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +71,9 @@ public class WorkflowExecutionImpl extends AbstractExecution implements Workflow
     @Transient
     private WorkflowModel workflowModel;
     
+    @Transient
+    private Map<String,Object> variables = new HashMap<>();
+    
     public WorkflowExecutionImpl(WorkflowModel model, String initiator) {
     	this.workflowModel = model;
     	this.name = model.getName();
@@ -131,7 +136,8 @@ public class WorkflowExecutionImpl extends AbstractExecution implements Workflow
 		final Start startModel = workflowModel.getStart();
 		final Transition startTransition = startModel.getTransition();
 		
-		WorkflowContext context = new WorkflowContextImpl(this,workflowModel, variables);
+		WorkflowContext context = new WorkflowContextImpl(this,workflowModel);
+		setVariables(variables);
 		
 		for (WorkflowValidator validator : startTransition.getValidators()) {
 			validator.validate(context);
@@ -148,12 +154,13 @@ public class WorkflowExecutionImpl extends AbstractExecution implements Workflow
 		this.currentSteps.add(createdStep);
 		
 		for (WorkflowAction preAction : nextStep.getPreActions()) {
-			preAction.execute(new WorkflowContextImpl(createdStep,workflowModel.getStep(createdStep.getName()), variables));
+			preAction.execute(new WorkflowContextImpl(createdStep,workflowModel.getStep(createdStep.getName())));
 		}
 	}
 	
 	public void takeTransition(Execution current, Transition transition, Map<String,Object> variables) {
-		WorkflowContext context = new WorkflowContextImpl(current,workflowModel.getStep(current.getName()), variables);
+		this.setVariables(variables);
+		WorkflowContext context = new WorkflowContextImpl(current,workflowModel.getStep(current.getName()));
 		
 		for (WorkflowValidator validator : transition.getValidators()) {
 			validator.validate(context);
@@ -177,7 +184,7 @@ public class WorkflowExecutionImpl extends AbstractExecution implements Workflow
 		this.currentSteps.add(createdStep);
 		
 		for (WorkflowAction preAction : nextStep.getPreActions()) {
-			preAction.execute(new WorkflowContextImpl(createdStep,workflowModel.getStep(createdStep.getName()), variables));
+			preAction.execute(new WorkflowContextImpl(createdStep,workflowModel.getStep(createdStep.getName())));
 		}
 		
 	}
@@ -190,6 +197,20 @@ public class WorkflowExecutionImpl extends AbstractExecution implements Workflow
 			this.historySteps.add(new HistoryStepExecutionImpl(current));
 			iter.remove();
 		}
+	}
+
+	@Override
+	public Map<String, Object> getVariables() {
+		return Collections.unmodifiableMap(this.variables);
+	}
+
+	@Override
+	public void setVariable(String key, Object value) {
+		this.variables.put(key,value);
+	}
+
+	public void setVariables(Map<String, Object> variables) {
+		this.variables.putAll(variables);	
 	}
 
 }

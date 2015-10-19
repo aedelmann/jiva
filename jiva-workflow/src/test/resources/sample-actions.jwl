@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow name="computer" xmlns="http://www.github.com/aedelmann/jiva/workflow/jwl">
+	 <start>
+	 	<transition name="request" to="#compute"/>
+	 </start>
+
+	 <step name="compute">
+	 	<transition name="add" to="#compute">
+	 		<actions>
+	 			<script lang="groovy" xmlns="http://www.github.com/aedelmann/jiva/workflow/extensions/action">
+	 				<expression>
+	 					int result = execution.variables['num1'] + execution.variables['num2']
+	 					execution.setVariable('result',result)
+	 				</expression>
+	 			</script>
+	 		</actions>
+	 	</transition>
+	 	<transition name="multiply" to="#compute">
+	 		<actions>
+	 			<script lang="groovy" xmlns="http://www.github.com/aedelmann/jiva/workflow/extensions/action">
+	 				<expression>
+	 					int result = execution.variables['num1'] * execution.variables['num2']
+	 					execution.setVariable('result',result)
+	 				</expression>
+	 			</script>
+	 		</actions>
+	 	</transition>
+	 	<transition name="abort" to="#aborted"/>
+	 </step>
+
+     <end name="aborted"/>
+
+</workflow>

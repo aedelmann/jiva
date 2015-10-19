@@ -42,4 +42,14 @@ public class StepExecutionImpl extends AbstractExecution implements StepExecutio
 		return null;
 	}
 
+	@Override
+	public Map<String, Object> getVariables() {
+		return parentExecution.getVariables();
+	}
+
+	@Override
+	public void setVariable(String key, Object value) {
+		parentExecution.setVariable(key, value);
+	}
+
 }

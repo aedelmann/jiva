@@ -1,15 +1,20 @@
 package de.aedelmann.jiva.workflow.engine;
 
 import java.util.Date;
+import java.util.Map;
 
 public interface Execution {
 	
-	public long getId();
+	long getId();
 
-    public String getName();
+    String getName();
 
-    public Date getCreatedOn();
+    Date getCreatedOn();
+    
+    Map<String,Object> getVariables();
+    
+    void setVariable(String key, Object value);
 
-    public WorkflowExecution getParent();
+    WorkflowExecution getParent();
   
 }

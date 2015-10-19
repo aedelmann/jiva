@@ -1,5 +1,6 @@
 package de.aedelmann.jiva.workflow.internal;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -58,13 +59,14 @@ public class DefaultWorkflowService implements WorkflowService {
 	public Set<String> getAvailableTransitions(long workflowInstanceId, Map<String, Object> variables) {
 		Set<String> availableTransitions = new HashSet<>();
 		WorkflowExecutionImpl workflowExecution = dao.findOne(workflowInstanceId);
+		workflowExecution.setVariables(variables);
 		WorkflowModel workflowModel = this.modelStore.getModel(workflowExecution.getName());
 		for (Execution currentExecution : workflowExecution.getActiveExecutions()) {
 			StepExecutionImpl stepExecution = (StepExecutionImpl)currentExecution;
 			Step stepModel = workflowModel.getStep(stepExecution.getName());
 			for (Transition transition : stepModel.getTransitions()) {
 				availableTransitions.add(transition.getName());
-				if (!isTransitionAvailable(stepExecution, stepModel, transition, variables)) {
+				if (!isTransitionAvailable(stepExecution, stepModel, transition)) {
 					availableTransitions.remove(transition.getName());
 				}
 			}
@@ -72,9 +74,14 @@ public class DefaultWorkflowService implements WorkflowService {
 		return availableTransitions;
 	}
 	
-	private boolean isTransitionAvailable(Execution execution, Step model, Transition transition, Map<String,Object> variables) {
+	@Override
+	public Set<String> getAvailableTransitions(long workflowInstanceId) {
+		return getAvailableTransitions(workflowInstanceId,Collections.emptyMap());
+	}
+	
+	private boolean isTransitionAvailable(Execution execution, Step model, Transition transition) {
 		for (WorkflowCondition condition : transition.getConditions()) {
-			boolean passes = condition.passesCondition(new WorkflowContextImpl(execution,model,variables));
+			boolean passes = condition.passesCondition(new WorkflowContextImpl(execution,model));
 			if (!passes) {
 				return false;
 			}
@@ -93,7 +100,7 @@ public class DefaultWorkflowService implements WorkflowService {
 		for (Execution currentExecution : workflowInstance.getActiveExecutions()) {
 			final Step stepModel = workflowModel.getStep(currentExecution.getName());
 			Transition transitionToTake = stepModel.getTransitionByName(transitionName);
-			if (transitionToTake != null && isTransitionAvailable(currentExecution, stepModel, transitionToTake, variables)) {
+			if (transitionToTake != null && isTransitionAvailable(currentExecution, stepModel, transitionToTake)) {
 				workflowInstance.takeTransition(currentExecution, transitionToTake, variables);
 				if (isWorkflowFinished(workflowInstance, transitionToTake)) {
 					workflowInstance.complete();
@@ -117,6 +124,4 @@ public class DefaultWorkflowService implements WorkflowService {
 		return workflowInstance;
 	}
 
-
-    
 }

@@ -1,6 +1,8 @@
 package de.aedelmann.jiva.workflow.internal.engine.history;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -47,6 +49,16 @@ public class HistoryStepExecutionImpl extends AbstractExecution implements Histo
 	@Override
 	public Date getCompletedOn() {
 		return completedOn;
+	}
+
+	@Override
+	public Map<String, Object> getVariables() {
+		return Collections.emptyMap(); // history executions do not expose any transient variables.
+	}
+
+	@Override
+	public void setVariable(String key, Object value) {
+		// it does not make sense to add any transient variables to history executions.
 	}
 
 }

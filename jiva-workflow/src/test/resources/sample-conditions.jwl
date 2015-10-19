@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow name="approval" xmlns="http://www.github.com/aedelmann/jiva/workflow/jwl">
+	 <start>
+	 	<transition name="request" to="#managerApproval"/>
+	 </start>
+
+	 <step name="managerApproval">
+	 	<transition name="Approve" to="#approved">
+	 		<conditions>
+	 			<script lang="groovy" xmlns="http://www.github.com/aedelmann/jiva/workflow/extensions/condition">
+	 				<expression>
+	 					execution.variables['owner'] == 'alex'
+	 				</expression>
+	 			</script>
+	 		</conditions>
+	 	</transition>
+	 	<transition name="Reject"  to="#rejected"/>
+	 </step>
+
+     <end name="approved"/>
+     <end name="rejected"/>
+
+</workflow>

@@ -18,8 +18,8 @@ public class ScriptFactory {
 	}
 	
 	public Script<Object> getScript(String language, String expression) {
-		if (language.equalsIgnoreCase(GroovyExpression.LANG_KEY)) {
-			return new GroovyExpression(expression);
+		if (language.equalsIgnoreCase(GroovyScript.LANG_KEY)) {
+			return new GroovyScript(expression);
 		}
 		return null;
 	}
