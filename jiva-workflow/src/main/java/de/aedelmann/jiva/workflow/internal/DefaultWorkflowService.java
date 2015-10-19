@@ -1,6 +1,6 @@
 package de.aedelmann.jiva.workflow.internal;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -76,7 +76,7 @@ public class DefaultWorkflowService implements WorkflowService {
 	
 	@Override
 	public Set<String> getAvailableTransitions(long workflowInstanceId) {
-		return getAvailableTransitions(workflowInstanceId,Collections.emptyMap());
+		return getAvailableTransitions(workflowInstanceId,new HashMap<String,Object>());
 	}
 	
 	private boolean isTransitionAvailable(Execution execution, Step model, Transition transition) {
